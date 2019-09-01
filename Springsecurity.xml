@@ -1,0 +1,35 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+	
+	<beans:bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+<beans:property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+<beans:property name="url" value="jdbc:mysql://localhost/db"/>
+<beans:property name="username" value="root"/>
+<beans:property name="password" value="priya"/>
+</beans:bean>
+<http auto-config="true">
+	<intercept-url pattern="/loginform" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+	<intercept-url pattern="/defaultpage" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+	<intercept-url pattern="/resources/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+	<intercept-url pattern="/**" access="ROLE_MAKER,ROLE_CHECKER"/>
+	
+	<!-- <intercept-url pattern="/**" access="ROLE_USER"/> -->
+	<form-login login-page="/loginform" username-parameter="j_username" default-target-url="/defaultpage"  always-use-default-target="true"/>
+	<logout logout-success-url="/logout"/>
+	</http>
+	
+	
+	<authentication-manager>
+	<authentication-provider>
+	 <jdbc-user-service data-source-ref="ds" users-by-username-query="select userid,password,Check_Enable from user9090 where userid=?" authorities-by-username-query="select u.userid,a.user_role from authorities9090 a,user9090 u where u.userid=a.userid and u.userid=?" />  
+	<!-- <jdbc-user-service data-source-ref="ds" users-by-username-query="select userid,password,Check_Enable from user9090 where userid=?" authorities-by-username-query="select a.userid,a.roleid,r.rolename from authorities9091 a inner join role r on r.roleid = a.roleid where a.userid in (select u.userid from authorities9091 a,user9090 u where u.userid=a.userid and u.userid=?)"/> -->
+	 </authentication-provider>
+	</authentication-manager>
+
+
+  </beans:beans>
